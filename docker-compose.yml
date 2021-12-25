@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  php-apache-environment:
+  app:
     image: sitiamaliafii/sister-uas
     container_name: php-apache
     depends_on:
@@ -16,24 +16,35 @@ services:
     container_name: db
     image: mysql
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: 
-      MYSQL_DATABASE: crud
     ports:
       - "3306:3306"
+    environment:
+      MYSQL_DATABASE: crud
+      MYSQL_ROOT_PASSWORD: admin
     volumes:
       - db:/var/lib/mysql
-      - ./crud.sql:/docker-entrypoint-initdb.d/crud.sql
+      - ./crud.sql:/docker-entrypoint-initdb.d/crud.sql 
     networks:
       - backend
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+        - '3060:80'
+    restart: always
+    environment:
+        PMA_HOST: db
+    depends_on:
+        - db
 
 volumes:
-  db:
+    db: 
 
+#Docker Networks
 networks:
   backend:
-    name: backend-network
-    ipam:
+    name: backend-networks
+    ipam: 
       driver: default
       config:
         - subnet: 172.20.0.0/24
